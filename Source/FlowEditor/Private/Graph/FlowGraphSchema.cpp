@@ -29,6 +29,29 @@
 
 #define LOCTEXT_NAMESPACE "FlowGraphSchema"
 
+const FName UFlowGraphSchema::PC_Exec(TEXT("exec"));
+const FName UFlowGraphSchema::PC_Boolean(TEXT("bool"));
+const FName UFlowGraphSchema::PC_Byte(TEXT("byte"));
+const FName UFlowGraphSchema::PC_Class(TEXT("class"));
+const FName UFlowGraphSchema::PC_Int(TEXT("int"));
+const FName UFlowGraphSchema::PC_Int64(TEXT("int64"));
+const FName UFlowGraphSchema::PC_Float(TEXT("float"));
+const FName UFlowGraphSchema::PC_Double(TEXT("double"));
+const FName UFlowGraphSchema::PC_Real(TEXT("real"));
+const FName UFlowGraphSchema::PC_Name(TEXT("name"));
+const FName UFlowGraphSchema::PC_Delegate(TEXT("delegate"));
+const FName UFlowGraphSchema::PC_MCDelegate(TEXT("mcdelegate"));
+const FName UFlowGraphSchema::PC_Object(TEXT("object"));
+const FName UFlowGraphSchema::PC_Interface(TEXT("interface"));
+const FName UFlowGraphSchema::PC_String(TEXT("string"));
+const FName UFlowGraphSchema::PC_Text(TEXT("text"));
+const FName UFlowGraphSchema::PC_Struct(TEXT("struct"));
+const FName UFlowGraphSchema::PC_Wildcard(TEXT("wildcard"));
+const FName UFlowGraphSchema::PC_FieldPath(TEXT("fieldpath"));
+const FName UFlowGraphSchema::PC_Enum(TEXT("enum"));
+const FName UFlowGraphSchema::PC_SoftObject(TEXT("softobject"));
+const FName UFlowGraphSchema::PC_SoftClass(TEXT("softclass"));
+
 bool UFlowGraphSchema::bInitialGatherPerformed = false;
 TArray<UClass*> UFlowGraphSchema::NativeFlowNodes;
 TArray<UClass*> UFlowGraphSchema::NativeFlowNodeAddOns;
@@ -224,6 +247,26 @@ bool UFlowGraphSchema::ShouldHidePinDefaultValue(UEdGraphPin* Pin) const
 
 FLinearColor UFlowGraphSchema::GetPinTypeColor(const FEdGraphPinType& PinType) const
 {
+	const FName TypeName = PinType.PinCategory;
+    const UGraphEditorSettings* Settings = GetDefault<UGraphEditorSettings>();
+
+    if (TypeName == UFlowGraphSchema::PC_Exec)
+    {
+        return Settings->ExecutionPinTypeColor;
+    }
+    else if (TypeName == UFlowGraphSchema::PC_Boolean)
+    {
+       return Settings->BooleanPinTypeColor;
+    }
+	else if (TypeName == UFlowGraphSchema::PC_Float)
+    {
+       return Settings->FloatPinTypeColor;
+    }
+	else if (TypeName == UFlowGraphSchema::PC_SoftClass)
+	{
+		return Settings->SoftClassPinTypeColor;
+	}
+
 	return FLinearColor::White;
 }
 

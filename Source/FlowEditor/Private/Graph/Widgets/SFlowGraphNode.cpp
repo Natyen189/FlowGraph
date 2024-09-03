@@ -47,6 +47,22 @@ void SFlowGraphPinExec::Construct(const FArguments& InArgs, UEdGraphPin* InPin)
 	bUsePinColorForText = true;
 }
 
+const FSlateBrush* SFlowGraphPinExec::GetPinIcon() const
+{
+	const FSlateBrush* brush = NULL;
+
+	if (IsConnected())
+	{
+		brush = FFlowEditorStyle::GetBrush("Graph.Pin.Connected");
+	}
+	else
+	{
+		brush = FFlowEditorStyle::GetBrush("Graph.Pin.Disconnected");
+	}
+
+	return brush;
+}
+
 const FLinearColor SFlowGraphNode::UnselectedNodeTint = FLinearColor(1.0f, 1.0f, 1.0f, 0.5f);
 const FLinearColor SFlowGraphNode::ConfigBoxColor = FLinearColor(0.04f, 0.04f, 0.04f, 1.0f);
 

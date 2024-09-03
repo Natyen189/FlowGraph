@@ -16,6 +16,10 @@ public:
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs, UEdGraphPin* InPin);
+
+	//~ Begin SGraphPin Interface
+	virtual const FSlateBrush* GetPinIcon() const override;
+	//~ End SGraphPin Interface
 };
 
 class FLOWEDITOR_API SFlowGraphNode : public SGraphNode
@@ -47,6 +51,7 @@ protected:
 
 	virtual FSlateColor GetConfigBoxBackgroundColor() const;
 
+
 	/** adds subnode widget inside current node */
 	virtual void AddSubNode(TSharedPtr<SGraphNode> SubNodeWidget);
 	// --
@@ -75,6 +80,10 @@ protected:
 
 	virtual void CreateInputSideAddButton(TSharedPtr<SVerticalBox> OutputBox) override;
 	virtual void CreateOutputSideAddButton(TSharedPtr<SVerticalBox> OutputBox) override;
+	virtual bool IsNameReadOnly () const override
+	{
+		return true;
+	}
 	// --
 
 	// SWidget

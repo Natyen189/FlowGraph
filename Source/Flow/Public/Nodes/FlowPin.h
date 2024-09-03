@@ -21,6 +21,9 @@ struct FLOW_API FFlowPin
 	UPROPERTY(EditDefaultsOnly, Category = "FlowPin")
 	FString PinToolTip;
 
+	UPROPERTY(EditDefaultsOnly, Category = "FlowPin")
+	FName PinCategory = FName("exec");
+
 	static inline FName AnyPinName = TEXT("AnyPinName");
 
 	FFlowPin()

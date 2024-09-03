@@ -46,6 +46,9 @@ void FFlowEditorStyle::Initialize()
 
 	StyleSet->Set("GraphEditor.Sequence_16x", new IMAGE_BRUSH("Icons/icon_Blueprint_Sequence_16x", Icon16));
 
+	StyleSet->Set("Graph.Pin.Connected", new IMAGE_BRUSH("/Graph/Pin_connected_VarA", FVector2D(15, 11)));
+	StyleSet->Set("Graph.Pin.Disconnected", new IMAGE_BRUSH("/Graph/Pin_disconnected_VarA", FVector2D(15, 11)));
+
 	// Flow assets
 	StyleSet->SetContentRoot(IPluginManager::Get().FindPlugin(TEXT("Flow"))->GetBaseDir() / TEXT("Resources"));
 

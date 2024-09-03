@@ -32,6 +32,31 @@ private:
 	static bool bBlueprintCompilationPending;
 
 public:
+
+	// Allowable PinType.PinCategory values
+	static const FName PC_Exec;
+	static const FName PC_Boolean;
+	static const FName PC_Byte;
+	static const FName PC_Class;    // SubCategoryObject is the MetaClass of the Class passed thru this pin, or SubCategory can be 'self'. The DefaultValue string should always be empty, use DefaultObject.
+	static const FName PC_SoftClass;
+	static const FName PC_Int;
+	static const FName PC_Int64;
+	static const FName PC_Float;
+	static const FName PC_Double;
+	static const FName PC_Real;
+	static const FName PC_Name;
+	static const FName PC_Delegate;    // SubCategoryObject is the UFunction of the delegate signature
+	static const FName PC_MCDelegate;  // SubCategoryObject is the UFunction of the delegate signature
+	static const FName PC_Object;    // SubCategoryObject is the Class of the object passed thru this pin, or SubCategory can be 'self'. The DefaultValue string should always be empty, use DefaultObject.
+	static const FName PC_Interface;	// SubCategoryObject is the Class of the object passed thru this pin.
+	static const FName PC_SoftObject;		// SubCategoryObject is the Class of the AssetPtr passed thru this pin.
+	static const FName PC_String;
+	static const FName PC_Text;
+	static const FName PC_Struct;    // SubCategoryObject is the ScriptStruct of the struct passed thru this pin, 'self' is not a valid SubCategory. DefaultObject should always be empty, the DefaultValue string may be used for supported structs.
+	static const FName PC_Wildcard;    // Special matching rules are imposed by the node itself
+	static const FName PC_Enum;    // SubCategoryObject is the UEnum object passed thru this pin
+	static const FName PC_FieldPath;		// SubCategoryObject is the Class of the property passed thru this pin.
+
 	static void SubscribeToAssetChanges();
 	static void GetPaletteActions(FGraphActionMenuBuilder& ActionMenuBuilder, const UFlowAsset* EditedFlowAsset, const FString& CategoryName);
 
