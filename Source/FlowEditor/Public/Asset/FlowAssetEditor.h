@@ -13,6 +13,7 @@
 class FFlowMessageLog;
 class SFlowGraphEditor;
 class SFlowPalette;
+class SFlowHistory;
 class UFlowAsset;
 class UFlowGraphNode;
 
@@ -31,6 +32,7 @@ public:
 	static const FName DetailsTab;
 	static const FName GraphTab;
 	static const FName PaletteTab;
+	static const FName HistoryTab;
 	static const FName RuntimeLogTab;
 	static const FName SearchTab;
 	static const FName ValidationLogTab;
@@ -44,6 +46,7 @@ protected:
 	TSharedPtr<SFlowGraphEditor> GraphEditor;
 	TSharedPtr<class IDetailsView> DetailsView;
 	TSharedPtr<class SFlowPalette> Palette;
+	TSharedPtr<class SFlowHistory> HistoryView;
 
 #if ENABLE_SEARCH_IN_ASSET_EDITOR
 	TSharedPtr<class SSearchBrowser> SearchBrowser;
@@ -113,6 +116,7 @@ private:
 	TSharedRef<SDockTab> SpawnTab_Details(const FSpawnTabArgs& Args) const;
 	TSharedRef<SDockTab> SpawnTab_Graph(const FSpawnTabArgs& Args) const;
 	TSharedRef<SDockTab> SpawnTab_Palette(const FSpawnTabArgs& Args) const;
+	TSharedRef<SDockTab> SpawnTab_History(const FSpawnTabArgs& Args) const;
 	TSharedRef<SDockTab> SpawnTab_RuntimeLog(const FSpawnTabArgs& Args) const;
 	TSharedRef<SDockTab> SpawnTab_Search(const FSpawnTabArgs& Args) const;
 	TSharedRef<SDockTab> SpawnTab_ValidationLog(const FSpawnTabArgs& Args) const;

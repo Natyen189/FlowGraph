@@ -7,16 +7,21 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 
 #include "FlowComponent.h"
+#include "FlowTypes.h"
 #include "FlowSubsystem.generated.h"
 
 class UFlowAsset;
 class UFlowNode_SubGraph;
+
+struct FFlowHistoryEntry;
+struct FFlowInstanceHistory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSimpleFlowEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimpleFlowComponentEvent, UFlowComponent*, Component);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTaggedFlowComponentEvent, UFlowComponent*, Component, const FGameplayTagContainer&, Tags);
 
 DECLARE_DELEGATE_OneParam(FNativeFlowAssetEvent, class UFlowAsset*);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FNativeFlowHistoryEvent, const FGuid&, const FFlowInstanceHistory&);
 
 /**
  * Flow Subsystem
@@ -50,7 +55,11 @@ private:
 	TMap<UFlowNode_SubGraph*, UFlowAsset*> InstancedSubFlows;
 
 #if WITH_EDITOR
+	 static TMap<FGuid, TArray<FFlowInstanceHistory>> InstancedFlowHistory;
+
 public:
+	static FNativeFlowHistoryEvent OnFlowHistoryAdded;
+
 	/* Called after creating the first instance of given Flow Asset */
 	static FNativeFlowAssetEvent OnInstancedTemplateAdded;
 
@@ -115,6 +124,11 @@ public:
 	const TMap<UFlowNode_SubGraph*, UFlowAsset*>& GetInstancedSubFlows() const { return InstancedSubFlows; }
 
 	virtual UWorld* GetWorld() const override;
+
+#if WITH_EDITOR
+	static void SaveInstancedFlowHistory(const FGuid& guid, const FFlowInstanceHistory& instanceHistory);
+	static const TArray<FFlowInstanceHistory> GetInstancedFlowHistory(const FGuid& guid);
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // SaveGame support

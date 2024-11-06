@@ -449,6 +449,8 @@ void UFlowNode::TriggerInput(const FName& PinName, const EFlowPinActivationType 
 		{
 			UFlowAsset::GetFlowGraphInterface()->OnInputTriggered(GraphNode, InputPins.IndexOfByKey(PinName));
 		}
+
+		GetFlowAsset()->OnInputTriggered(GetGuid(), InputPins.IndexOfByKey(PinName));
 #endif // WITH_EDITOR
 	}
 	else
@@ -462,21 +464,27 @@ void UFlowNode::TriggerInput(const FName& PinName, const EFlowPinActivationType 
 	switch (SignalMode)
 	{
 		case EFlowSignalMode::Enabled:
+		{
 			ExecuteInput(PinName);
 			break;
+		}
 		case EFlowSignalMode::Disabled:
+		{
 			if (UFlowSettings::Get()->bLogOnSignalDisabled)
 			{
 				LogNote(FString::Printf(TEXT("Node disabled while triggering input %s"), *PinName.ToString()));
 			}
 			break;
+		}
 		case EFlowSignalMode::PassThrough:
+		{
 			if (UFlowSettings::Get()->bLogOnSignalPassthrough)
 			{
 				LogNote(FString::Printf(TEXT("Signal pass-through on triggering input %s"), *PinName.ToString()));
 			}
 			OnPassThrough();
 			break;
+		}
 		default: ;
 	}
 }
@@ -509,6 +517,8 @@ void UFlowNode::TriggerOutput(const FName PinName, const bool bFinish /*= false*
 		{
 			UFlowAsset::GetFlowGraphInterface()->OnOutputTriggered(GraphNode, OutputPins.IndexOfByKey(PinName));
 		}
+
+		GetFlowAsset()->OnOutputTriggered(GetGuid(), OutputPins.IndexOfByKey(PinName));
 #endif // WITH_EDITOR
 	}
 	else

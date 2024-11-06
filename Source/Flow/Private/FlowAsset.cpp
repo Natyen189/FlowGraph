@@ -5,6 +5,7 @@
 #include "FlowLogChannels.h"
 #include "FlowSettings.h"
 #include "FlowSubsystem.h"
+#include "FlowTypes.h"
 
 #include "AddOns/FlowNodeAddOn.h"
 #include "Nodes/FlowNodeBase.h"
@@ -628,6 +629,13 @@ void UFlowAsset::DeinitializeInstance()
 		}
 	}
 
+#if WITH_EDITOR
+	FFlowHistory Entries;
+	NodesHistory.GenerateValueArray(Entries.HistoryEntries);
+	UFlowSubsystem::SaveInstancedFlowHistory(AssetGuid, FFlowInstanceHistory(FName(*GetNameSafe(GetOwner()->GetOuter())), Entries));
+	NodesHistory.Empty();
+#endif
+
 	if (TemplateAsset)
 	{
 		const int32 ActiveInstancesLeft = TemplateAsset->RemoveInstance(this);
@@ -762,6 +770,26 @@ void UFlowAsset::TriggerInput(const FGuid& NodeGuid, const FName& PinName)
 		Node->TriggerInput(PinName);
 	}
 }
+
+#if WITH_EDITOR
+void UFlowAsset::OnInputTriggered(const FGuid& NodeGuid, const int PinIndex)
+{
+	if (UFlowNode* Node = Nodes.FindRef(NodeGuid))
+	{
+		const int newIndex = NodesHistory.Num();
+		NodesHistory.Add(newIndex, FFlowHistoryEntry(EFlowNodeTriggerType::Input, PinIndex, NodeGuid));
+	}
+}
+
+void UFlowAsset::OnOutputTriggered(const FGuid& NodeGuid, const int PinIndex)
+{
+	if (UFlowNode* Node = Nodes.FindRef(NodeGuid))
+	{
+		const int newIndex = NodesHistory.Num();
+		NodesHistory.Add(newIndex, FFlowHistoryEntry(EFlowNodeTriggerType::Output, PinIndex, NodeGuid));
+	}
+}
+#endif
 
 void UFlowAsset::FinishNode(UFlowNode* Node)
 {

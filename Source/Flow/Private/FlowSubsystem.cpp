@@ -20,6 +20,8 @@
 #if WITH_EDITOR
 FNativeFlowAssetEvent UFlowSubsystem::OnInstancedTemplateAdded;
 FNativeFlowAssetEvent UFlowSubsystem::OnInstancedTemplateRemoved;
+FNativeFlowHistoryEvent UFlowSubsystem::OnFlowHistoryAdded;
+TMap<FGuid, TArray<FFlowInstanceHistory>> UFlowSubsystem::InstancedFlowHistory;
 #endif
 
 #define LOCTEXT_NAMESPACE "FlowSubsystem"
@@ -299,6 +301,26 @@ UFlowAsset* UFlowSubsystem::GetRootFlow(const UObject* Owner) const
 
 	return nullptr;
 }
+
+#if WITH_EDITOR
+void UFlowSubsystem::SaveInstancedFlowHistory(const FGuid& guid, const FFlowInstanceHistory& instanceHistory)
+{
+	auto& FoundInstanceHistory = InstancedFlowHistory.FindOrAdd(guid);
+	FoundInstanceHistory.Add(instanceHistory);
+
+	OnFlowHistoryAdded.Broadcast(guid, instanceHistory);
+}
+
+const TArray<FFlowInstanceHistory> UFlowSubsystem::GetInstancedFlowHistory(const FGuid& guid)
+{
+	if (auto FoundInstaceHistory = InstancedFlowHistory.Find(guid))
+	{
+		return *FoundInstaceHistory;
+	}
+
+	return TArray<FFlowInstanceHistory>();
+}
+#endif
 
 UWorld* UFlowSubsystem::GetWorld() const
 {

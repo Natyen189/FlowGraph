@@ -22,6 +22,8 @@ class UEdGraph;
 class UEdGraphNode;
 class UFlowAsset;
 
+struct FFlowHistoryEntry;
+
 #if WITH_EDITOR
 
 /** Interface for calling the graph editor methods */
@@ -94,6 +96,9 @@ protected:
 	bool CanFlowNodeClassBeUsedByFlowAsset(const UClass& FlowNodeClass) const;
 	bool CanFlowAssetUseFlowNodeClass(const UClass& FlowNodeClass) const;
 	bool CanFlowAssetReferenceFlowNode(const UClass& FlowNodeClass, FText* OutOptionalFailureReason = nullptr) const;
+
+private:
+	TMap<int, FFlowHistoryEntry> NodesHistory;
 #endif
 
 	// IFlowGraphInterface
@@ -159,6 +164,11 @@ public:
 
 	// Processes all nodes and creates map of all pin connections
 	void HarvestNodeConnections();
+
+	const TMap<int, FFlowHistoryEntry> GetNodesHistory() const
+	{
+		return NodesHistory;
+	}
 #endif
 
 	const TMap<FGuid, UFlowNode*>& GetNodes() const { return Nodes; }
@@ -355,6 +365,11 @@ protected:
 
 	void FinishNode(UFlowNode* Node);
 	void ResetNodes();
+
+#if WITH_EDITOR
+	void OnInputTriggered(const FGuid& NodeGuid, const int PinIndex);
+	void OnOutputTriggered(const FGuid& NodeGuid, const int PinIndex);
+#endif
 
 public:
 	UFlowSubsystem* GetFlowSubsystem() const;

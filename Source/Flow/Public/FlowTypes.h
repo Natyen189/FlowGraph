@@ -20,6 +20,14 @@ enum class EFlowNodeStyle : uint8
 #endif
 
 UENUM(BlueprintType)
+enum class EFlowNodeTriggerType : uint8
+{
+	None,
+	Input,
+	Output,
+};
+
+UENUM(BlueprintType)
 enum class EFlowNodeState : uint8
 {
 	NeverActivated,
@@ -120,3 +128,52 @@ FORCEINLINE_DEBUGGABLE EFlowAddOnAcceptResult CombineFlowAddOnAcceptResult(EFlow
 	// Prioritize the higher numerical value enum value
 	return static_cast<EFlowAddOnAcceptResult>(FMath::Max(Result0AsInt, Result1AsInt));
 }
+
+struct FFlowHistoryEntry
+{
+	EFlowNodeTriggerType Type = EFlowNodeTriggerType::None;
+
+	int PinIndex = INDEX_NONE;
+
+	FGuid NodeGUID = FGuid();
+
+	FFlowHistoryEntry() = default;
+	FFlowHistoryEntry(const EFlowNodeTriggerType& type, const int pinIndex, const FGuid& nodeGUID)
+		:Type(type)
+		, PinIndex(pinIndex)
+		, NodeGUID(nodeGUID)
+	{}
+
+	bool operator==(const FFlowHistoryEntry& other) const
+	{
+		return Type == other.Type && PinIndex == other.PinIndex && NodeGUID == other.NodeGUID;
+	}
+};
+
+struct FFlowHistory
+{
+	TArray<FFlowHistoryEntry> HistoryEntries;
+
+	bool operator==(const FFlowHistory& other) const
+	{
+		return HistoryEntries == other.HistoryEntries;
+	}
+};
+
+struct FFlowInstanceHistory
+{
+	FName InstanceName;
+	FFlowHistory History;
+
+	FFlowInstanceHistory() = default;
+	FFlowInstanceHistory(const FName& instanceName, const FFlowHistory& history)
+		:InstanceName(instanceName)
+		,History(history)
+	{}
+
+	bool operator==(const FFlowInstanceHistory& other) const
+	{
+		return InstanceName == other.InstanceName && History == other.History;
+	}
+};
+

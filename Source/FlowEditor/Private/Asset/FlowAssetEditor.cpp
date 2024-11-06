@@ -11,6 +11,7 @@
 #include "Graph/FlowGraphEditor.h"
 #include "Graph/FlowGraphSchema.h"
 #include "Graph/Widgets/SFlowPalette.h"
+#include "Graph/Widgets/SFlowHistory.h"
 
 #include "FlowAsset.h"
 
@@ -39,6 +40,7 @@
 const FName FFlowAssetEditor::DetailsTab(TEXT("Details"));
 const FName FFlowAssetEditor::GraphTab(TEXT("Graph"));
 const FName FFlowAssetEditor::PaletteTab(TEXT("Palette"));
+const FName FFlowAssetEditor::HistoryTab(TEXT("History"));
 const FName FFlowAssetEditor::RuntimeLogTab(TEXT("RuntimeLog"));
 const FName FFlowAssetEditor::SearchTab(TEXT("Search"));
 const FName FFlowAssetEditor::ValidationLogTab(TEXT("ValidationLog"));
@@ -125,6 +127,11 @@ void FFlowAssetEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& 
 				.SetGroup(WorkspaceMenuCategoryRef)
 				.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "Kismet.Tabs.Palette"));
 
+	InTabManager->RegisterTabSpawner(HistoryTab, FOnSpawnTab::CreateSP(this, &FFlowAssetEditor::SpawnTab_History))
+				.SetDisplayName(LOCTEXT("HistoryTab", "History"))
+				.SetGroup(WorkspaceMenuCategoryRef)
+				.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "Kismet.Tabs.Bookmarks"));
+
 	InTabManager->RegisterTabSpawner(RuntimeLogTab, FOnSpawnTab::CreateSP(this, &FFlowAssetEditor::SpawnTab_RuntimeLog))
 				.SetDisplayName(LOCTEXT("RuntimeLog", "Runtime Log"))
 				.SetGroup(WorkspaceMenuCategoryRef)
@@ -149,6 +156,7 @@ void FFlowAssetEditor::UnregisterTabSpawners(const TSharedRef<class FTabManager>
 	InTabManager->UnregisterTabSpawner(GraphTab);
 	InTabManager->UnregisterTabSpawner(ValidationLogTab);
 	InTabManager->UnregisterTabSpawner(PaletteTab);
+	InTabManager->UnregisterTabSpawner(HistoryTab);
 	InTabManager->UnregisterTabSpawner(SearchTab);
 }
 
@@ -257,6 +265,17 @@ TSharedRef<SDockTab> FFlowAssetEditor::SpawnTab_Palette(const FSpawnTabArgs& Arg
 		];
 }
 
+TSharedRef<SDockTab> FFlowAssetEditor::SpawnTab_History(const FSpawnTabArgs& Args) const
+{
+	check(Args.GetTabId() == HistoryTab);
+
+	return SNew(SDockTab)
+		.Label(LOCTEXT("FlowHistoryTitle", "History"))
+		[
+			HistoryView.ToSharedRef()
+		];
+}
+
 TSharedRef<SDockTab> FFlowAssetEditor::SpawnTab_RuntimeLog(const FSpawnTabArgs& Args) const
 {
 	check(Args.GetTabId() == RuntimeLogTab);
@@ -360,9 +379,20 @@ void FFlowAssetEditor::InitFlowAssetEditor(const EToolkitMode::Type Mode, const 
 										)
 										->Split
 										(
-											FTabManager::NewStack()
-											->SetSizeCoefficient(0.125f)
-											->AddTab(PaletteTab, ETabState::OpenedTab)
+											FTabManager::NewSplitter()
+											->SetOrientation(Orient_Horizontal)
+											->Split
+											(
+												FTabManager::NewStack()
+												->SetSizeCoefficient(0.15f)
+												->AddTab(PaletteTab, ETabState::OpenedTab)
+											)
+											->Split
+											(
+												FTabManager::NewStack()
+												->SetSizeCoefficient(0.15f)
+												->AddTab(HistoryTab, ETabState::OpenedTab)
+											)
 										)
 		);
 
@@ -504,6 +534,9 @@ void FFlowAssetEditor::CreateWidgets()
 
 	// Palette
 	Palette = SNew(SFlowPalette, SharedThis(this));
+
+	// History
+	HistoryView = SNew(SFlowHistory, SharedThis(this));
 
 	// Search
 #if ENABLE_SEARCH_IN_ASSET_EDITOR
